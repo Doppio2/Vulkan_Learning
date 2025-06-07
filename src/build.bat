@@ -6,7 +6,7 @@ set VulkanPath=C:\VulkanSDK\1.4.313.0
 set VulkanInclude=%VulkanPath%\Include
 set VulkanLib=%VulkanPath%\Lib
 
-set CommonCompilerFlags=-MT -nologo -D_CRT_SECURE_NO_WARNINGS -Gm- -GR- -EHa- -Od -Oi -WX -W4 -wd4530 -wd4201 -wd4100 -wd4101 -wd4189 -FC -Z7 %VulkanLib%\vulkan-1.lib
+set CommonCompilerFlags=-MT -nologo -D_CRT_SECURE_NO_WARNINGS -D_DEBUG -Gm- -GR- -EHa- -Od -Oi -WX -W4 -wd4530 -wd4201 -wd4100 -wd4101 -wd4189 -FC -Z7 %VulkanLib%\vulkan-1.lib
 set CommonLinkerFlags=user32.lib Gdi32.lib Shell32.lib winmm.lib -opt:ref
 
 set Includes=/I %VulkanInclude%

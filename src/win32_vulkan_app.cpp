@@ -1,10 +1,14 @@
 #include <windows.h>
 
 #include <stdint.h>
+#include <cstring>
+#include <malloc.h>
 #include <assert.h>        // Later implement own asssert.
 
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_win32.h>
+
+// For dynamic arrays and hash table's i need a stb lib here.
 
 #define func static
 #define global_var static
@@ -13,10 +17,59 @@
 
 typedef uint32_t u32;
 
+// Global for now. 
+
 bool global_var GlobalRunning;
+
+#ifdef _DEBUG
+    global_var const int   ValidationLayerCount = 1;
+    global_var const char *ValidationLayers[ValidationLayerCount] = {"VK_LAYER_KHRONOS_validation"};
+    global_var bool EnableValidationLayers = true;
+#else
+    global_var bool EnableValidationLayers = false;
+#endif
+
+#ifdef _DEBUG
+bool CheckValidationLayerSupport()
+{
+    u32 AvailableLayerCount;
+    vkEnumerateInstanceLayerProperties(&AvailableLayerCount, nullptr);
+
+    // TODO: for now it's a malloc.
+    VkLayerProperties *AvailableLayers = (VkLayerProperties*)malloc(sizeof(VkLayerProperties)*AvailableLayerCount);
+    vkEnumerateInstanceLayerProperties(&AvailableLayerCount, AvailableLayers);
+
+    for(u32 ValidationLayerIndex = 0; ValidationLayerIndex < ValidationLayerCount; ValidationLayerIndex++) 
+    {
+        bool LayerFound = false;
+
+        for(u32 AvailableLayerIndex = 0; AvailableLayerIndex < AvailableLayerCount; AvailableLayerIndex++)
+        {
+            if(strcmp(ValidationLayers[ValidationLayerIndex], AvailableLayers[AvailableLayerIndex].layerName) == 0)
+            {
+                LayerFound = true;
+                break;
+            }
+        }
+
+        if(!LayerFound)
+        {
+            return false;
+        }
+    }
+
+    free(AvailableLayers);
+    return true;
+}
+#endif
 
 VkInstance CreateVulkanInstance()
 {
+    if(EnableValidationLayers && !CheckValidationLayerSupport())
+    {
+        OutputDebugStringA("Validation layers requested, but not available!\n");
+    }
+
     VkInstance VulkanInstance = {};
 
     // This struct will be used for creating vulkan instance.

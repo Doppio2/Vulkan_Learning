@@ -1,0 +1,12 @@
+/build/
+
+*.exe
+*.out
+*.app
+
+*.o
+*.obj
+
+*~
+*.tmp
+*.log
